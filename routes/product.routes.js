@@ -9,5 +9,6 @@ const router = express.Router();
 router.post('/create-product', authMiddleware, adminMiddleware,productController.create);
 router.get('/products', authMiddleware, productController.getallproducts);
 router.get('/product/:productId',authMiddleware, productController.getproduct);
+router.put('/product/:productId', authMiddleware, adminMiddleware, productController.updateProduct);
 
 module.exports = router;

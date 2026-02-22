@@ -55,7 +55,7 @@ exports.getproduct = async (req, res) => {
   try {
     const productId = req.params.productId;
 
-    if(mongoose.Types.ObjectId.isValid(productId)) {
+    if(!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({msg:"Invalid product ID"});
     }
 
@@ -80,3 +80,36 @@ exports.getproduct = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+
+
+
+exports.updateProduct = async (req, res) => {
+  try{
+    const productId = req.params.productId;
+    const { name, price, stock, description, isActive } = req.body;
+
+    const product = await Product.findById(productId);
+
+    if(!product) return res.status(404).json({msg:"Product not found"});
+
+    if (name !== undefined) product.name = name;
+    if (price !== undefined) product.price = price;
+    if (stock !== undefined) product.stock = stock;
+    if (description !== undefined) product.description = description;
+    if (isActive !== undefined) product.isActive = isActive;
+
+
+    await product.save();
+
+
+
+    res.status(200).json({
+      message: 'Product update successfully',
+      product
+    });
+  }catch(error){
+      res.status(500).json({
+      message: "Failed to update Product, server fail",
+    });
+  }
+}

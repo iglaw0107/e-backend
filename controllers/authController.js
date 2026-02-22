@@ -5,7 +5,7 @@ require('dotenv').config();
 // REGISTER
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ msg: 'All fields are required' });
@@ -19,7 +19,8 @@ exports.register = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password // hashing handled by model
+      password,
+      role // hashing handled by model
     });
 
     res.status(201).json({
