@@ -135,3 +135,39 @@ exports.deleteProduct = async (req, res) => {
   }
 }
 
+
+exports.searchProduct = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const search = req.query.search || '';
+    const minPrice = parseInt(req.query.minPrice) || 0;
+    const maxPrice = parseInt(req.query.maxPrice) || Number.MAX_VALUE;
+    const sort = req.query.sort || 'createdAt';
+
+    const skip = (page - 1) * limit;
+
+    const filter = {
+      isActive: true,
+      price: { $gte: minPrice, $lte: maxPrice },
+      name: { $regex: search, $options: 'i' }
+    };
+
+    const products = await Product.find(filter)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      page,
+      totalPages: Math.ceil(total / limit),
+      totalProducts: total,
+      products
+    });
+
+  } catch (error) {
+    res.status(500).json({ msg: "Server error" });
+  }
+};
