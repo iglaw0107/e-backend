@@ -10,5 +10,6 @@ router.post('/create-product', authMiddleware, adminMiddleware,productController
 router.get('/products', authMiddleware, productController.getallproducts);
 router.get('/product/:productId',authMiddleware, productController.getproduct);
 router.put('/product/:productId', authMiddleware, adminMiddleware, productController.updateProduct);
+router.delete('/product/:productId', authMiddleware, adminMiddleware, productController.deleteProduct);
 
 module.exports = router;

@@ -113,3 +113,25 @@ exports.updateProduct = async (req, res) => {
     });
   }
 }
+
+
+
+exports.deleteProduct = async (req, res) => {
+  try{
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
+    await product.deleteOne();
+
+    res.status(200).json({
+      msg: "Product deleted successfully"
+    });
+  }catch(error){
+    res.status(500).json({msg:"Server err"});
+  }
+}
+
