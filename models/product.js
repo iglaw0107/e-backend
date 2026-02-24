@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const category = require('./category');
-
 
 const productSchema = mongoose.Schema({
     name: {type:String, required:true},
@@ -9,7 +7,13 @@ const productSchema = mongoose.Schema({
     stock:{type:Number, required:true, default:0},
     description:{type:String},
     isActive:{type:Boolean, default:true},
-    category: {type:mongoose.Schema.Types.ObjectId, ref:"Category", required:true},
+    categories: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category',
+            required: true
+        }
+        ],
     rating:{type:Number, default:0},
     numReviews:{type:Number, default:0},
     createdBy: {

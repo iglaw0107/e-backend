@@ -3,19 +3,31 @@ const mongoose = require('mongoose');
 
 exports.create = async (req, res) => {
   try {
-    const { name, price, stock, description } = req.body;
+    const { name, price, stock, description, categories} = req.body;
 
     if (!name || price == null || stock == null) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
+    if (!categories || !Array.isArray(categories) || categories.length === 0) {
+      return res.status(400).json({ message: "At least one category required" });
+    }
 
-    
+    const validCategories = await Category.find({
+      _id: { $in: categories },
+      isActive: true
+    });
+
+    if (validCategories.length !== categories.length) {
+      return res.status(400).json({ message: "Invalid categories provided" });
+    }
+
 
     const product = await Product.create({
       name,
       price,
       stock,
       description,
+      categories,
       createdBy: req.user.userId
     });
 
@@ -39,7 +51,9 @@ exports.getallproducts = async (req, res) => {
     let products;
 
     if (req.user.role === 'admin') {
-      products = await Product.find();
+      products = await Product.find()
+        .populate('categories', 'name')
+        .populate('createdBy', 'name email');
     } else {
       products = await Product.find({ createdBy: req.user.userId });
     }
@@ -88,7 +102,10 @@ exports.updateProduct = async (req, res) => {
     const productId = req.params.productId;
     const { name, price, stock, description, isActive } = req.body;
 
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({
+      _id:productId,
+      createdBy:req.user.userId
+    });
 
     if(!product) return res.status(404).json({msg:"Product not found"});
 
@@ -119,7 +136,10 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try{
     const productId = req.params.productId;
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({
+      _id:productId,
+      createdBy:req.user.userId
+    });
 
     if (!product) {
       return res.status(404).json({ msg: "Product not found" });
@@ -147,14 +167,21 @@ exports.searchProduct = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
+    const activeCategories = await Category.find({ isActive: true }).select('_id');
+    const activeCategoryIds = activeCategories.map(cat => cat._id);
+
     const filter = {
       isActive: true,
+      categories: { $in: activeCategoryIds },
       price: { $gte: minPrice, $lte: maxPrice },
       name: { $regex: search, $options: 'i' }
     };
 
+    const allowedSortFields = ['price', 'createdAt', 'rating'];
+    const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt';
+    
     const products = await Product.find(filter)
-      .sort(sort)
+      .sort({ [sortField]: -1 })
       .skip(skip)
       .limit(limit);
 
