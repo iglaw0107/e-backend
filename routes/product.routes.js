@@ -4,6 +4,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 const productController = require('../controllers/product.controller');
 const categoryController = require('../controllers/category.controller');
 const cartController = require('../controllers/cart.controller');
+const orderController = require('../controllers/order.controller');
 const router = express.Router();
 
 
@@ -27,5 +28,9 @@ router.post('/admin/categories', authMiddleware, adminMiddleware, categoryContro
 router.post('/cart', authMiddleware, cartController.addToCart);
 router.get('/cart', authMiddleware, cartController.getCart);
 router.delete('/cart/:productId', authMiddleware, cartController.removeCart);
+
+
+router.post('/orders', authMiddleware, orderController.createOrder);
+
 
 module.exports = router;
