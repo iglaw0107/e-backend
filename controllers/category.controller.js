@@ -30,3 +30,10 @@ exports.getallCategory = async (req, res) => {
         res.status(500).json({msg:"Server error"})
     }
 }
+
+
+// exports.deleteCategory = async (req, res) => {
+//     try{
+//         const {categoryId} = req.parama
+//     }
+// }
