@@ -3,6 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const productController = require('../controllers/product.controller');
 const categoryController = require('../controllers/category.controller');
+const cartController = require('../controllers/cart.controller');
 const router = express.Router();
 
 
@@ -19,6 +20,12 @@ router.get('/product/:id',authMiddleware, productController.getproduct);
 router.get('/products/search', productController.searchProduct);
 
 router.get('/categories', categoryController.getallCategory);
-router.post('admin/categories', authMiddleware, adminMiddleware, categoryController.createCategory);
+router.post('/admin/categories', authMiddleware, adminMiddleware, categoryController.createCategory);
+
+
+
+router.post('/cart', authMiddleware, cartController.addToCart);
+router.get('/cart', authMiddleware, cartController.getCart);
+router.delete('/cart/:productId', authMiddleware, cartController.removeCart);
 
 module.exports = router;

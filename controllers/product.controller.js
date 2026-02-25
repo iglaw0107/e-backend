@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Category = require('../models/category');
 const mongoose = require('mongoose');
 
 exports.create = async (req, res) => {
@@ -67,7 +68,7 @@ exports.getallproducts = async (req, res) => {
 
 exports.getproduct = async (req, res) => {
   try {
-    const productId = req.params.productId;
+    const productId = req.params.id;
 
     if(!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({msg:"Invalid product ID"});
@@ -99,7 +100,7 @@ exports.getproduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try{
-    const productId = req.params.productId;
+    const productId = req.params.id;
     const { name, price, stock, description, isActive } = req.body;
 
     const product = await Product.findOne({
@@ -135,7 +136,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try{
-    const productId = req.params.productId;
+    const productId = req.params.id;
     const product = await Product.findOne({
       _id:productId,
       createdBy:req.user.userId
