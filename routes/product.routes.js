@@ -33,4 +33,9 @@ router.delete('/cart/:productId', authMiddleware, cartController.removeCart);
 router.post('/orders', authMiddleware, orderController.createOrder);
 
 
+router.get('/orders/my', authMiddleware, orderController.getMyOrder);
+router.get('/orders/orders', authMiddleware, adminMiddleware, orderController.getAllOrders);
+router.put('/orders/:id/cancel', authMiddleware, orderController.cancelOrder);
+
+
 module.exports = router;

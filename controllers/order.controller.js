@@ -136,3 +136,67 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
+
+exports.getMyOrder = async (req, res) => {
+  try{
+    const orders = await Order.find({user : req.user.userId})
+      .sort({createdAt: -1});
+    
+      res.status(200).json({orders});
+  }catch(error){
+    res.status(500).json({msg:"Server Error"});
+  }
+}
+
+
+exports.getAllOrders = async (req, res) => {
+  try{
+    const orders = await Order.find()
+      .populate('user', 'name email')
+      .sort({createdAt: -1});
+
+
+    res.status(200).json({orders});
+  }catch(error){
+    res.status(500).json({msg:"Server error"});
+  }
+}
+
+
+exports.cancelOrder = async (req, res) => {
+  try{
+    const orderId = req.params.id;
+
+    const order = await Order.findOne({
+      _id:orderId,
+      user:req.user.userId
+    });
+
+    if(!order){
+      return res.status(404).json({msg:"Order not found"});
+    };
+
+    if(order.orderStatus !== 'pending'){
+      return res.status(400).json({msg:"Only pending orders can be cancelled"});
+    };
+
+    for(const item of order.items){
+      const product = await Product.findById(item.product);
+
+      if(product){
+        product.stock += item.quantity;
+        await product.save();
+      }
+    }
+
+
+    order.orderStatus = 'cancelled';
+
+    await order.save();
+
+    res.status(200).json({msg:"Order cancelled successfully"});
+  }catch(error){
+    res.status(500).json({msg:"Server error"});
+  }
+};
