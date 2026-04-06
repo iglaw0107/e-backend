@@ -51,6 +51,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ msg: 'Invalid email or password' });
     }
 
+    if (!process.env.SECRET_KEY) {
+          return res.status(500).json({ msg: 'Server misconfiguration' });
+      }
+      
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
       process.env.SECRET_KEY,

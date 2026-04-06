@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
 const mongoose = require('mongoose');
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 exports.create = async (req, res) => {
   try {
@@ -161,7 +162,7 @@ exports.searchProduct = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const search = req.query.search || '';
+    const search = escapeRegex(req.query.search || '');
     const minPrice = parseInt(req.query.minPrice) || 0;
     const maxPrice = parseInt(req.query.maxPrice) || Number.MAX_VALUE;
     const sort = req.query.sort || 'createdAt';

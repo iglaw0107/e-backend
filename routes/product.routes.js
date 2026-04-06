@@ -17,8 +17,9 @@ router.delete('/products/:id', authMiddleware, adminMiddleware, productControlle
 
 
 router.get('/products', authMiddleware, productController.getallproducts);
-router.get('/product/:id',authMiddleware, productController.getproduct);
 router.get('/products/search', productController.searchProduct);
+router.get('/product/:id',authMiddleware, productController.getproduct);
+
 
 router.get('/categories', categoryController.getallCategory);
 router.post('/admin/categories', authMiddleware, adminMiddleware, categoryController.createCategory);

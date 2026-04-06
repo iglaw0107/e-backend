@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const OrderItemSchema = new mongoose.Schema({
     product: {
         type:mongoose.Schema.ObjectId,
-        ref:'product',
+        ref:'Product',
         required: true
     },
     name : String,
@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus :{
         type: String,
-        enum:['pending', 'processing', 'shiped', 'delivered', 'cancelled'],
+        enum:['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
         default:'pending'
     },
     paymentStatus:{
