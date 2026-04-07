@@ -23,11 +23,13 @@ router.get('/product/:id',authMiddleware, productController.getproduct);
 
 router.get('/categories', categoryController.getallCategory);
 router.post('/admin/categories', authMiddleware, adminMiddleware, categoryController.createCategory);
+router.delete('/admin/categories/:id', authMiddleware, adminMiddleware, categoryController.deleteCategory);
 
 
 
 router.post('/cart', authMiddleware, cartController.addToCart);
 router.get('/cart', authMiddleware, cartController.getCart);
+router.put('/cart', authMiddleware, cartController.updateCartItem);
 router.delete('/cart/:productId', authMiddleware, cartController.removeCart);
 
 
@@ -37,6 +39,13 @@ router.post('/orders', authMiddleware, orderController.createOrder);
 router.get('/orders/my', authMiddleware, orderController.getMyOrder);
 router.get('/orders/orders', authMiddleware, adminMiddleware, orderController.getAllOrders);
 router.put('/orders/:id/cancel', authMiddleware, orderController.cancelOrder);
+
+
+router.post('/products/:productId/reviews', authMiddleware, reviewController.addReview);
+router.get('/products/:productId/reviews', reviewController.getProductReviews);
+
+
+router.put('/admin/orders/:id/status', authMiddleware, adminMiddleware, orderController.updateOrderStatus);
 
 
 module.exports = router;

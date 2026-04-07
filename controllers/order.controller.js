@@ -200,3 +200,28 @@ exports.cancelOrder = async (req, res) => {
     res.status(500).json({msg:"Server error"});
   }
 };
+
+
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ msg: 'Invalid status' });
+        }
+
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ msg: 'Order not found' });
+        }
+
+        order.orderStatus = status;
+        await order.save();
+
+        res.status(200).json({ msg: 'Order status updated', order });
+    } catch (error) {
+        res.status(500).json({ msg: 'Server error' });
+    }
+};
