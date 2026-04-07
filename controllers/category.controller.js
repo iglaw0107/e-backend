@@ -37,3 +37,24 @@ exports.getallCategory = async (req, res) => {
 //         const {categoryId} = req.parama
 //     }
 // }
+
+
+exports.deleteCategory = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const category = await Category.findById(id);
+
+        if (!category) {
+            return res.status(404).json({ msg: 'Category not found' });
+        }
+
+        // soft delete 
+        category.isActive = false;
+        await category.save();
+
+        res.status(200).json({ msg: 'Category deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ msg: 'Server error' });
+    }
+};

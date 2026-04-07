@@ -5,14 +5,16 @@ const productController = require('../controllers/product.controller');
 const categoryController = require('../controllers/category.controller');
 const cartController = require('../controllers/cart.controller');
 const orderController = require('../controllers/order.controller');
+const reviewController = require('../controllers/review.controller');
+const { productValidator } = require('../validators/product.validator');
 const router = express.Router();
 
 
 
 router.get('/admin/products/search',authMiddleware, adminMiddleware ,productController.searchProduct)
-router.post('/products/create', authMiddleware, adminMiddleware,productController.create);
-router.put('/products/:id', authMiddleware, adminMiddleware, productController.updateProduct);
-router.delete('/products/:id', authMiddleware, adminMiddleware, productController.deleteProduct);
+router.post('/products/create', authMiddleware, adminMiddleware, productValidator ,productController.create);
+router.put('/products/:id', authMiddleware, adminMiddleware, productValidator, productController.updateProduct);
+router.delete('/products/:id', authMiddleware, adminMiddleware, productValidator ,productController.deleteProduct);
 
 
 
